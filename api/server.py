@@ -47,9 +47,12 @@ def create_app() -> FastAPI:
     if os.path.exists(os.path.join(frontend_dir, "trace-explorer")):
         app.mount("/traces", StaticFiles(directory=os.path.join(frontend_dir, "trace-explorer"), html=True), name="trace-explorer")
     
+    from fastapi.responses import RedirectResponse
+
+
     @app.get("/")
-    def root():
-        return {"name": "Agent Orchestrator API", "version": "1.0.0", "docs": "/docs"}
+    async def root():
+      return RedirectResponse(url="/review/")
     
     @app.get("/health")
     def health():
