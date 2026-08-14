@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Orchestrator — Trace Explorer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <h1>Agent Orchestrator <span style="font-weight:400;color:var(--color-slate-500)">/ Trace Explorer</span></h1>
+            <nav>
+                <a href="/review">Review</a>
+                <a href="/traces" class="active">Trace Explorer</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container layout">
+        <aside class="sidebar">
+            <div class="analytics-summary" id="analytics-summary">
+                <!-- Summary inserted here -->
+            </div>
+            <h3>Recent Traces</h3>
+            <div id="trace-list" class="trace-list">
+                <p class="empty-state">Loading traces...</p>
+            </div>
+        </aside>
+        
+        <section class="main-content">
+            <div id="trace-tree-container" class="trace-tree-container">
+                <p class="empty-state">Select a trace to view details.</p>
+            </div>
+        </section>
+        
+        <aside class="detail-panel" id="detail-panel">
+            <div class="panel-header">
+                <h3>Span Details</h3>
+                <button onclick="closeDetailPanel()" class="btn-close">&times;</button>
+            </div>
+            <div id="span-content" class="panel-content">
+                <p class="empty-state">Select a node in the tree.</p>
+            </div>
+        </aside>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>

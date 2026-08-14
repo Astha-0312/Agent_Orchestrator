@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    container_name: agent_orchestrator_api
+    ports:
+      - "8000:8000"
+    environment:
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - REDIS_URL=redis://redis:6379/0
+      - CHROMADB_PATH=/app/chromadb_data
+      - DATABASE_URL=sqlite:///app/traces.db
+      - POSTGRES_URL=postgresql://agent:agent@postgres:5432/agent_db
+      - LOG_LEVEL=INFO
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    volumes:
+      - chromadb_data:/app/chromadb_data
+      - trace_data:/app
+    command: uvicorn api.server:app --host 0.0.0.0 --port 8000 --reload
+    restart: unless-stopped
+
+  celery_worker:
+    build: .
+    container_name: agent_orchestrator_worker
+    environment:
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - REDIS_URL=redis://redis:6379/0
+      - CHROMADB_PATH=/app/chromadb_data
+      - DATABASE_URL=sqlite:///app/traces.db
+      - POSTGRES_URL=postgresql://agent:agent@postgres:5432/agent_db
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - chromadb_data:/app/chromadb_data
+    command: celery -A celery_app worker --loglevel=info --concurrency=2
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: agent_orchestrator_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: agent_orchestrator_postgres
+    environment:
+      POSTGRES_DB: agent_db
+      POSTGRES_USER: agent
+      POSTGRES_PASSWORD: agent
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agent"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: agent_orchestrator_chromadb
+    ports:
+      - "8001:8000"
+    volumes:
+      - chromadb_server_data:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+      - ANONYMIZED_TELEMETRY=FALSE
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+  postgres_data:
+  chromadb_data:
+  chromadb_server_data:
+  trace_data:

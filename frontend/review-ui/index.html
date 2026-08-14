@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Orchestrator — Review</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <h1>Agent Orchestrator</h1>
+            <nav>
+                <a href="/review" class="active">Review</a>
+                <a href="/traces">Trace Explorer</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="task-submission">
+            <h2>New Task</h2>
+            <form id="task-form">
+                <input type="text" id="task-prompt" placeholder="What should the agent do?" required autocomplete="off">
+                <button type="submit" class="btn btn-primary">Submit Task</button>
+            </form>
+        </section>
+
+        <section class="pending-approvals-section">
+            <h2>Pending Approvals</h2>
+            <div id="approvals-container" class="grid-container">
+                <!-- Approval cards injected here -->
+                <p class="empty-state">No pending approvals.</p>
+            </div>
+        </section>
+
+        <section class="tasks-section">
+            <h2>Recent Tasks</h2>
+            <div id="tasks-container" class="list-container">
+                <!-- Task list injected here -->
+                <p class="empty-state">No recent tasks.</p>
+            </div>
+        </section>
+    </main>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
